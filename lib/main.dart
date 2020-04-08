@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nodustmobileapp/AboutUs.dart';
+import 'package:nodustmobileapp/ClaimYourPoints.dart';
+import 'package:nodustmobileapp/ContactUs.dart';
+import 'package:nodustmobileapp/Notifications.dart';
 import 'dart:async';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -22,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: ' Products'),
+      home: MyHomePage(title: ' No Dust'),
     );
   }
 }
@@ -93,12 +97,12 @@ class _MyHomePageState extends State<MyHomePage> {
 */
 
 
-  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+ // TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
   @override
   Widget build(BuildContext context) {
 
-    final emailField = TextField(
+  /*  final emailField = TextField(
       obscureText: false,
       style: style,
       decoration: InputDecoration(
@@ -130,8 +134,88 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
-
+*/
     return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      drawer: new Drawer(
+          child: new ListView(
+            children: <Widget>[
+              new DrawerHeader(child: new Text(''),
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    image: DecorationImage(
+                        image: AssetImage("images/logo.jpg"),
+                        fit: BoxFit.cover)
+                ),
+              ),
+
+              new ListTile(
+                title: new Text('Home'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              new ListTile(
+                title: new Text('About Us'),
+                onTap: () {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => new AboutUs()));
+                },
+              ),
+
+              new ListTile(
+                title: new Text('Notifications'),
+                onTap: () {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => new Notifications()));
+                },
+              ),
+
+            //  new Divider(),
+              new ListTile(
+                title: new Text('Claim your points'),
+                onTap: () {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => new ClaimYourPoints()));
+                },
+              ),
+              new ListTile(
+                title: new Text('Contact Us'),
+                onTap: () {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => new ContactUs()));
+                },
+              ),
+              new ListTile(
+                title: new Text('Invite'),
+                onTap: () {},
+              ),
+            ],
+          )
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home),
+            title: new Text('Home'),
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.credit_card),
+            title: new Text('My Cards'),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart),
+              title: Text('Products')
+          )
+        ],
+      ),
+
       body: Center(
         child: Container(
           color: Colors.white,
@@ -148,17 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(height: 45.0),
-                emailField,
-                SizedBox(height: 25.0),
-                passwordField,
-                SizedBox(
-                  height: 35.0,
-                ),
-                loginButon,
-                SizedBox(
-                  height: 15.0,
-                ),
+
               ],
             ),
           ),
