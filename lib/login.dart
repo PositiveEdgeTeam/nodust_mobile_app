@@ -14,7 +14,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _isLoading = false;
-  String myurl ="http://192.168.1.2:80/busBeep_API/LogIn";
+  String myurl ="http://192.168.1.4:80/busBeep_API/LogIn";
   final  usernameController = new TextEditingController();
 
   final passwordController = new TextEditingController();
@@ -126,7 +126,7 @@ class _LoginState extends State<Login> {
           _isLoading = false;
         });
         sharedPreferences.setString("customer_id", jsonResponse['customer_id']);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Home()), (Route<dynamic> route) => false);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Home(title: ' No Dust')), (Route<dynamic> route) => false);
       }
     }
     else {
