@@ -13,7 +13,7 @@ class ViewProducts extends StatelessWidget {
         ),
         body: WebView(
 
-          initialUrl: "http://192.168.1.4/webPages/list_child.html",
+          initialUrl: "http://192.168.1.10/webPages/list_child.html",
           onWebViewCreated: (WebViewController webViewController) {
             _controller.complete(webViewController);
           },
