@@ -70,47 +70,51 @@ class _LoginState extends State<Login> {
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(36.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 150.0,
-                  child: Image.asset(
-                    "images/logo.jpg",
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(height: 30.0),
-                emailField,
-                SizedBox(height: 10.0),
-                passwordField,
-                SizedBox(
-                  height: 25.0,
-                ),
-                loginButon,
-                SizedBox(
-                  height: 15.0,
-                ),
-                Center(
-                  child: Row(children: <Widget>[
-                    Text("Not A Member?"),
-                    FlatButton(onPressed: (){},
-                    child: Text("Sign Up" ,style: TextStyle(decoration: TextDecoration.underline,),),
-                      textColor: Colors.blue,
-                    )
+            child: ListView(
+              children: <Widget>[ Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
 
-                  ],
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center)
-                ),
-                FlatButton(
-                  onPressed: (){
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Home(title: ' No Dust')), (Route<dynamic> route) => false);
-                  },
-                  child: Text("Skip"),
-                  textColor: Colors.blue,
-                ),
+                  SizedBox(
+                    height: 150.0,
+                    child: Image.asset(
+                      "images/logo.jpg",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(height: 30.0),
+                  emailField,
+                  SizedBox(height: 10.0),
+                  passwordField,
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  loginButon,
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Center(
+                    child: Row(children: <Widget>[
+                      Text("Not A Member?"),
+                      FlatButton(onPressed: (){},
+                      child: Text("Sign Up" ,style: TextStyle(decoration: TextDecoration.underline,),),
+                        textColor: Colors.blue,
+                      )
+
+                    ],
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center)
+                  ),
+                  FlatButton(
+                    onPressed: (){
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Home(title: ' No Dust')), (Route<dynamic> route) => false);
+                    },
+                    child: Text("Skip"),
+                    textColor: Colors.blue,
+                  ),
+                ],
+              ),
               ],
             ),
           ),
