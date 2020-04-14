@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nodustmobileapp/Models/sharedPref.dart';
-import 'package:nodustmobileapp/home.dart';
+import 'package:nodustmobileapp/homemenues.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'dart:convert';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +19,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _isLoading = false;
-  String myurl ="http://192.168.1.6:80/busBeep_API/LogIn";
+  String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/LogIn";
   final  usernameController = new TextEditingController();
 
   final passwordController = new TextEditingController();
@@ -54,7 +56,7 @@ class _LoginState extends State<Login> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: (){
-          signIn();
+          checkInput();
         }
         ,
         child: Text("Login",
@@ -108,7 +110,7 @@ class _LoginState extends State<Login> {
                   ),
                   FlatButton(
                     onPressed: (){
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Home(title: ' No Dust')), (Route<dynamic> route) => false);
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
                     },
                     child: Text("Skip"),
                     textColor: Colors.blue,
@@ -123,6 +125,17 @@ class _LoginState extends State<Login> {
     );
   }
 
+  void checkInput()
+  {
+    if(usernameController.text.isNotEmpty&&passwordController.text.isNotEmpty)
+      signIn();
+    else{
+      Fluttertoast.showToast(
+        msg: "Please Insert Your Email & Password",
+        toastLength: Toast.LENGTH_LONG,
+      );
+    }
+  }
 
   signIn() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -137,7 +150,13 @@ class _LoginState extends State<Login> {
         SharedPref sharedPref = SharedPref();
         sharedPref.save("user_data", jsonResponse.data);
         sharedPreferences.setString("customer_id", jsonResponse.data.customer_id);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Home(title: ' No Dust')), (Route<dynamic> route) => false);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
+      }
+      else{
+        Fluttertoast.showToast(
+          msg: "Incorrect Email or Password",
+          toastLength: Toast.LENGTH_LONG,
+        );
       }
     }
     else {

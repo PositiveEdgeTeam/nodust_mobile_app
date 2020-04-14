@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nodustmobileapp/homemenues.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:nodustmobileapp/login.dart';
@@ -6,7 +7,7 @@ import 'home.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  Widget _defaultHome =  new Home(title: ' No Dust');
+  Widget _defaultHome =  new HomeMenu(title: ' No Dust');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   //String userName = prefs.get("customer_id") ?? "_";
   var id_ = prefs.get("user_data");

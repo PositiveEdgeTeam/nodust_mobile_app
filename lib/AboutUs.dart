@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
-String myurl ="http://192.168.1.11:80/busBeep_API/AboutUs";
+String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/AboutUs";
 
 class AboutUs extends StatefulWidget {
   @override
