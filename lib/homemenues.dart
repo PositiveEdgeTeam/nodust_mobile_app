@@ -84,12 +84,14 @@ class _HomeMenuState extends State<HomeMenu> {
           ),
 
             new ListTile(
+              leading: Icon(Icons.home),
               title: new Text('Home'),
             onTap: () {
               Navigator.pop(context);
             },
           ),
            new ListTile(
+             leading: Icon(Icons.supervisor_account),
               title: new Text('About Us'),
             onTap: () {
               Navigator.push(context,
@@ -98,6 +100,7 @@ class _HomeMenuState extends State<HomeMenu> {
           ),
 
             new ListTile(
+              leading: Icon(Icons.notifications),
               title: new Text('Notifications'),
               onTap: () {
               Navigator.push(
@@ -109,6 +112,7 @@ class _HomeMenuState extends State<HomeMenu> {
 
           //  new Divider(),
             new ListTile(
+              leading: Icon(Icons.trending_up),
               title: new Text('Claim your points'),
               onTap: () {
               Navigator.push(
@@ -118,6 +122,7 @@ class _HomeMenuState extends State<HomeMenu> {
             },
             ),
             new ListTile(
+              leading: Icon(Icons.call),
               title: new Text('Contact Us'),
               onTap: () {
               Navigator.push(context,
@@ -125,6 +130,7 @@ class _HomeMenuState extends State<HomeMenu> {
             },
             ),
             new ListTile(
+              leading: Icon(Icons.person_add)         ,
               title: new Text('Invite'),
               onTap: () {},
           ),
