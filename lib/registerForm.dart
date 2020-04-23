@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:nodustmobileapp/Models/channel.dart';
 import 'package:nodustmobileapp/Models/channelResponse.dart';
 import 'package:nodustmobileapp/homemenues.dart';
-import 'dart:io';
-
+import 'package:connectivity/connectivity.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key key}) : super(key: key);
@@ -17,7 +18,7 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _agreedToTOS = true;
+  bool _agreedToTOS = false;
   String myurl ="http://192.168.1.6:80/cmobile_API/GetChannels";
   String myurlRegister ="http://192.168.1.6:80/cmobile_API/RegisterNewCustomer";
   List<Channel> _channels =[];
@@ -31,6 +32,8 @@ class _RegisterFormState extends State<RegisterForm> {
   final  mobileController = new TextEditingController();
   final  phoneController = new TextEditingController();
   final parentphoneController = new TextEditingController();
+
+  StreamSubscription<ConnectivityResult> subscription;
 
   _DropDownFormField_Channel() {
     return FormField<String>(
@@ -288,34 +291,120 @@ class _RegisterFormState extends State<RegisterForm> {
 
   void load_channles () async
   {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        var response = await  http.post(myurl);
-        if(response.statusCode == 200) {
-          print(response.body);
-          ChannelResponse jsonResponse = ChannelResponse.fromJson(jsonDecode(response.body));
-          if(jsonResponse != null && jsonResponse.state=="Success") {
-            setState(() {
-              _channels = jsonResponse.data;
-            });
+    var response = await  http.post(myurl);
+    if(response.statusCode == 200) {
+      print(response.body);
+      ChannelResponse jsonResponse = ChannelResponse.fromJson(jsonDecode(response.body));
+      if(jsonResponse != null && jsonResponse.state=="Success") {
+        setState(() {
+          _channels = jsonResponse.data;
+        });
 
-          }
-
-        }
       }
-    } on SocketException catch (_) {
-      print('not connected');
+
     }
 
+  }
+  void _showConnectLost()
+  {
+    showDialog(
+        context: context,
+        builder: (_) => Material(
+          type: MaterialType.transparency,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 50.0,
+                ), Center( // A simplified version of dialog.
+                  child: Text('Connection Lost',
+                    style: TextStyle(fontSize: 30,color: Colors.white),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Center(
+                  child: Text('We were unable to complete your request. please try again.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 15,color: Colors.white),
+                    maxLines: 2,
+                  ),
+                ),
+                Spacer(flex: 1, ),
 
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  margin: EdgeInsets.all(20),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: double.infinity),
+                    child: RaisedButton(
+                      child: Text('Ok' ,style: TextStyle(color: Colors.white,fontSize: 20),),
+                      color: Colors.red,
+                      onPressed: (){
+                        Navigator.pop(_);
+                      },
+                      padding: EdgeInsets.symmetric(horizontal:10 ),
+
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+              ],
+            ),
+          ),
+        )
+    );
   }
 
 
   @override
   void initState() {
+    print('inite');
+    _checkConnection();
+    subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.mobile ||result == ConnectivityResult.wifi) {
+        load_channles();
+        setState(() {
+          _agreedToTOS = true;
+        });
+      }
+      else{
+        print("no internet");
+        setState(() {
+          _agreedToTOS = false;
+        });
+        _showConnectLost();
+
+      }
+    });
     super.initState();
-    load_channles();
+  }
+
+ void _checkConnection()async{
+   var connectivityResult = await (Connectivity().checkConnectivity());
+   if (connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi) {
+     load_channles();
+     setState(() {
+       _agreedToTOS = true;
+     });
+   } else  {
+     print("no internet");
+     setState(() {
+       _agreedToTOS = false;
+     });
+     _showConnectLost();
+
+   }
+ }
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   void _submit() {
@@ -335,12 +424,12 @@ class _RegisterFormState extends State<RegisterForm> {
     if(response.statusCode == 200) {
       print(response.body);
       ChannelResponse jsonResponse = ChannelResponse.fromJson(jsonDecode(response.body));
-      if(jsonResponse != null && jsonResponse.state=="Success") {
+      if(jsonResponse != null && jsonResponse.state=="Done") {
         Fluttertoast.showToast(
           msg: jsonResponse.message ??  "Incorrect Email or Password",
           toastLength: Toast.LENGTH_LONG,
         );
-        //sharedPreferences.setString("customer_id", jsonResponse.data[0].customer_id);
+        await new Future.delayed(const Duration(seconds : 2));        //sharedPreferences.setString("customer_id", jsonResponse.data[0].customer_id);
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
       }
       else{

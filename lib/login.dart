@@ -1,17 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nodustmobileapp/Models/sharedPref.dart';
 import 'package:nodustmobileapp/homemenues.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nodustmobileapp/register.dart';
-
+import 'package:connectivity/connectivity.dart';
 import 'dart:convert';
-import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Models/loginResponse.dart';
-import 'Models/user.dart';
-
 class Login extends StatefulWidget {
 
 
@@ -25,6 +23,9 @@ class _LoginState extends State<Login> {
   final  usernameController = new TextEditingController();
   int _radioValue =1;
   final passwordController = new TextEditingController();
+  bool _agreedToTOS = false;
+
+  StreamSubscription<ConnectivityResult> subscription;
 
   @override
   Widget build(BuildContext context) {
@@ -166,10 +167,21 @@ class _LoginState extends State<Login> {
       });
   }
 
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
   void checkInput()
   {
     if(usernameController.text.isNotEmpty&&passwordController.text.isNotEmpty)
-      signIn();
+      {
+      if(_agreedToTOS )
+        signIn();
+      else
+        _showConnectLost();
+      }
     else{
       Fluttertoast.showToast(
         msg: "Please Insert Your Email & Password",
@@ -178,6 +190,94 @@ class _LoginState extends State<Login> {
     }
   }
 
+  void _checkConnection()async{
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi) {
+      setState(() {
+        _agreedToTOS = true;
+      });
+    } else  {
+      print("no internet");
+      setState(() {
+        _agreedToTOS = false;
+      });
+      _showConnectLost();
+
+    }
+  }
+  @override
+  void initState() {
+    _checkConnection();
+    subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile ||result == ConnectivityResult.wifi) {
+        setState(() {
+          _agreedToTOS = true;
+        });
+
+      }
+      else{
+        print("no internet");
+        setState(() {
+          _agreedToTOS = false;
+        });
+
+      }
+        });
+        }
+        void _showConnectLost()
+        {
+          showDialog(
+              context: context,
+              builder: (_) => Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 50.0,
+                      ), Center( // A simplified version of dialog.
+                        child: Text('Connection Lost',
+                          style: TextStyle(fontSize: 30,color: Colors.white),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      Center(
+                        child: Text('We were unable to complete your request. please try again.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 15,color: Colors.white),
+                          maxLines: 2,
+                        ),
+                      ),
+                      Spacer(flex: 1, ),
+
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        margin: EdgeInsets.all(20),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minWidth: double.infinity),
+                          child: RaisedButton(
+                            child: Text('Ok' ,style: TextStyle(color: Colors.white,fontSize: 20),),
+                            color: Colors.red,
+                            onPressed: (){
+                              Navigator.pop(_);
+                            },
+                            padding: EdgeInsets.symmetric(horizontal:10 ),
+
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+          );
+        }
   signIn() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var jsonResponse = null;

@@ -12,7 +12,8 @@ class Channel{
   }
   Map<String, dynamic> toJson() => {
     'channel_id': channel_id,
-    'channel_name': channel_name,};
+    'channel_name': channel_name,
+  };
 
 
   String toString() {

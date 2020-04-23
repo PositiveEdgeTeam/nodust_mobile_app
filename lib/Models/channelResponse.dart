@@ -5,6 +5,8 @@ class ChannelResponse{
   String code;
   String message;
   List<Channel> data;
+
+
   ChannelResponse(this.state, this.code,this.message, [this.data]);
 
   factory ChannelResponse.fromJson(dynamic json) {
