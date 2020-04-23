@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nodustmobileapp/Models/sharedPref.dart';
 import 'package:nodustmobileapp/Models/user.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'dart:async';
-
-import 'AboutUs.dart';
-import 'ClaimYourPoints.dart';
-import 'ContactUs.dart';
-import 'Notifications.dart';
 import 'login.dart';
 
 class Home extends StatefulWidget {
@@ -23,8 +16,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final userData_card =  Container(
       child: Card(
-      child:Row(
-        children: <Widget>[
+        child:Row(
+          children: <Widget>[
           Container(
             child:Column(
               children: <Widget>[
@@ -60,7 +53,7 @@ class _HomeState extends State<Home> {
                           fontSize: 10
                       ),
                       ),
-                      Text(userLoad != null ? userLoad.customer_credit: "0"),
+                      Text(userLoad != null ? userLoad.customer_balance : "0"),
                     ],
                   ),
                   margin: EdgeInsets.symmetric(horizontal: 8),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nodustmobileapp/Models/user.dart';
 import 'package:nodustmobileapp/home.dart';
 import 'package:nodustmobileapp/mycards.dart';
+import 'package:nodustmobileapp/myprofile.dart';
 import 'package:nodustmobileapp/viewProducts.dart';
 
 import 'AboutUs.dart';
@@ -40,22 +41,6 @@ class _HomeMenuState extends State<HomeMenu> {
 
   @override
   Widget build(BuildContext context) {
-
-
-    Widget _bottomNavigationBar(int selectedIndex) => BottomNavigationBar(
-      onTap: (int index) => setState(() => _currentIndex = index),
-      currentIndex: selectedIndex,
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon:  Icon(Icons.home), title:  Text('Home'),),
-        BottomNavigationBarItem(
-          icon:  Icon(Icons.credit_card), title:  Text('My Cards'),),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart), title: Text('Products'),),
-      ],
-    );
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -64,7 +49,7 @@ class _HomeMenuState extends State<HomeMenu> {
           Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: GestureDetector(
-                onTap: () {},
+                onTap: _viewProfile,
                 child: Icon(
                   Icons.account_circle,
                   size: 40.0,
@@ -81,15 +66,17 @@ class _HomeMenuState extends State<HomeMenu> {
                 color: Colors.blue,
                 image: DecorationImage(
                     image: AssetImage("images/logo.jpg"), fit: BoxFit.cover)),
-          ),
+            ),
 
-            new ListTile(
-              title: new Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+              new ListTile(
+                leading: Icon(Icons.home),
+                title: new Text('Home'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                ),
            new ListTile(
+             leading: Icon(Icons.supervisor_account),
               title: new Text('About Us'),
             onTap: () {
               Navigator.push(context,
@@ -98,6 +85,7 @@ class _HomeMenuState extends State<HomeMenu> {
           ),
 
             new ListTile(
+              leading: Icon(Icons.notifications),
               title: new Text('Notifications'),
               onTap: () {
               Navigator.push(
@@ -109,6 +97,7 @@ class _HomeMenuState extends State<HomeMenu> {
 
           //  new Divider(),
             new ListTile(
+              leading: Icon(Icons.trending_up),
               title: new Text('Claim your points'),
               onTap: () {
               Navigator.push(
@@ -118,6 +107,7 @@ class _HomeMenuState extends State<HomeMenu> {
             },
             ),
             new ListTile(
+              leading: Icon(Icons.call),
               title: new Text('Contact Us'),
               onTap: () {
               Navigator.push(context,
@@ -125,7 +115,8 @@ class _HomeMenuState extends State<HomeMenu> {
             },
             ),
             new ListTile(
-              title: new Text('Invite'),
+                leading: Icon(Icons.person_add),
+                title: new Text('Invite'),
               onTap: () {},
           ),
         ],
@@ -188,6 +179,20 @@ class _HomeMenuState extends State<HomeMenu> {
         _currentIndex = index;
         });
         }
+  }
+  _viewProfile()
+  {
+    if(userLoad ==null)
+      {
+        Navigator.of(context)
+            .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
+          return new Login();
+      }));
+      }
+    else{
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (context) => new Profile()));
+    }
   }
   loadSharedPrefs() async {
     try {

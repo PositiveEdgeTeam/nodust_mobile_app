@@ -1,28 +1,27 @@
-import 'package:nodustmobileapp/Models/user.dart';
+import 'package:nodustmobileapp/Models/channel.dart';
 
-class LoginResponse {
+class ChannelResponse{
   String state;
   String code;
   String message;
-  List<User> data;
+  List<Channel> data;
+  ChannelResponse(this.state, this.code,this.message, [this.data]);
 
-  LoginResponse(this.state, this.code,this.message, [this.data]);
-
-  factory LoginResponse.fromJson(dynamic json) {
+  factory ChannelResponse.fromJson(dynamic json) {
     if (json['data'] != null) {
       var tagObjsJson = json['data'] as List;
-      List<User> _users = tagObjsJson.map((tagJson) => User.fromJson(tagJson))
+      List<Channel> _channels = tagObjsJson.map((tagJson) => Channel.fromJson(tagJson))
           .toList();
 
-      return LoginResponse(
+      return ChannelResponse(
           json['state'] as String,
           json['code'] as String,
           json['message'] as String,
-          _users
+          _channels
       );
     }
     else{
-      return LoginResponse(
+      return ChannelResponse(
           json['state'] as String,
           json['code'] as String,
           json['message'] as String);
