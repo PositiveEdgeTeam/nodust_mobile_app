@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,13 +40,13 @@ class _AboutUsState extends State<AboutUs> {
               child: Container(
                 color: Colors.white,
                 child: Padding(
-                  padding: const EdgeInsets.all(36.0),
+                  padding: const EdgeInsets.all(35.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-                        height: 155.0,
+                        width: 150,
                         child: Image.asset(
                           "images/logo.jpg",
                           fit: BoxFit.contain,
@@ -58,37 +59,31 @@ class _AboutUsState extends State<AboutUs> {
               ),
             ),
             SingleChildScrollView(
-                child:RichText(
-                  text: TextSpan(
-                    style: DefaultTextStyle.of(context).style,
-                    children: <TextSpan>[
+               child:Container(
+                 padding: EdgeInsets.symmetric(horizontal: 15),
+                 child: RichText(
+                      text: TextSpan(
+                       // style: DefaultTextStyle.of(context).style,
 
-                      TextSpan(
-                        text: aboutUsContent,
-                        style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                            fontSize:15,
-                            color:Colors.black12.withOpacity(1.0)
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.w900, fontSize: 25.0,fontFamily: 'Cardo'  ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: aboutUsContent,
+
+
+                            style: TextStyle(
+                              fontStyle: FontStyle.normal,
+                                fontSize:15,
+
+
+                                color:Colors.black12.withOpacity(1.0)
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
-              /*RichText(
-              text: TextSpan(
-                text: aboutUsContent,
-                style: DefaultTextStyle.of(context).style
-              //  fontSize:12,
-              ),
-            )*/
-      /* WebView(
+                    ),
+               )
 
-              initialUrl: "http://www.nodust-eg.com/?pg=about",
-              onWebViewCreated: (WebViewController webViewController) {
-                _controller.complete(webViewController);
-              },
-              javascriptMode: JavascriptMode.unrestricted,
-            ) */
             ),
           ],
         ) );
@@ -129,36 +124,5 @@ class _AboutUsState extends State<AboutUs> {
 
 
 
-/*class AboutUs extends StatefulWidget {
-  _AboutUs createState() => _AboutUs();
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return null;
-  }
-
-}
-
-class _AboutUs extends State <AboutUs> {
-  // This widget is the root of your application.
-
-  bool _isLoading = false;
-  String myurl ="http://192.168.1.11:80/busBeep_API/AboutUs";
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("About Us"),
-      ),
-
-      body: function()  ,
-    );
-  }
-  function () async{
-    http.get(myurl);
-  }
-
-}*/
 
 
