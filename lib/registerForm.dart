@@ -230,6 +230,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   const SizedBox(height: 16.0),
                   TextFormField(
                     controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email',
                     ),
