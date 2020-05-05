@@ -25,9 +25,9 @@ class ContactUs extends StatefulWidget {
 class _ContactUs extends State<ContactUs> {
   final GlobalKey<FormState> _formKey_ = GlobalKey<FormState>();
   bool _agreedToTOS = false;
- String myurl ="http://gdms.nodust-eg.com:80/Cmobile_API/ContactUs";
- // String myurl ="http://192.168.1.2/mobile_API/cmobile_API/ContactUs";
- String myurlSubmit ="http://gdms.nodust-eg.com:80/cmobile_API/Complaint";
+ String myurl ="http://192.168.1.10/mobile_API/cmobile_API/ContactUs";
+ // String myurl ="http://192.168.1.10/mobile_API/cmobile_API/ContactUs";
+ String myurlSubmit ="http://192.168.1.10/mobile_API/cmobile_API/Complaint";
   List<Contact> _subjects =[];
   List<Contact> _categories =[Contact("services")];
   //// =[subject("1","Personal"),subject("2","Company")];

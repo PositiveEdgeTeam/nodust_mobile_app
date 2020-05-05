@@ -35,6 +35,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   StreamSubscription<ConnectivityResult> subscription;
 
+
   _DropDownFormField_Channel() {
     return FormField<String>(
       validator: (value) {
