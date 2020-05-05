@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:nodustmobileapp/Models/user.dart';
 import 'package:nodustmobileapp/home.dart';
+import 'package:nodustmobileapp/invite.dart';
 import 'package:nodustmobileapp/mycards.dart';
 import 'package:nodustmobileapp/myprofile.dart';
 import 'package:nodustmobileapp/viewProducts.dart';
-
+import 'package:nodustmobileapp/contactpage.dart';
 import 'AboutUs.dart';
 import 'ClaimYourPoints.dart';
-import 'ContactUs.dart';
+//import 'Contactpage.dart';
 import 'Models/sharedPref.dart';
 import 'Notifications.dart';
 import 'login.dart';
@@ -111,14 +112,17 @@ class _HomeMenuState extends State<HomeMenu> {
                 title: new Text('Contact Us'),
                 onTap: () {
                   Navigator.push(context,
-                      new MaterialPageRoute(builder: (context) => new ContactUs()));
+                      new MaterialPageRoute(builder: (context) => new Contactpage()));
                 },
               ),
               new ListTile(
                 leading: Icon(Icons.person_add),
                 title: new Text('Invite'),
-                onTap: () {},
-              ),
+                onTap: () {
+                  Navigator.push(context,
+                      new MaterialPageRoute(builder: (context) => new Invite()));
+                },
+              )
             ],
           )),
       bottomNavigationBar:BottomNavigationBar(

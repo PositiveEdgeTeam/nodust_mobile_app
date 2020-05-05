@@ -10,6 +10,7 @@ import 'package:nodustmobileapp/Models/contactusResponse.dart';
 import 'package:nodustmobileapp/homemenues.dart';
 import 'package:connectivity/connectivity.dart';
 
+
 import 'Models/contact.dart';
 
 class ContactUs extends StatefulWidget {
@@ -19,22 +20,23 @@ class ContactUs extends StatefulWidget {
   _ContactUs createState() => _ContactUs();
 }
 
-enum Buttons {
-  Email,
-  Google,
-  Facebook,
-}
+
 
 class _ContactUs extends State<ContactUs> {
   final GlobalKey<FormState> _formKey_ = GlobalKey<FormState>();
   bool _agreedToTOS = false;
-  String myurl ="http://192.168.1.2/Cmobile_API/ContactUs";
-//  String myurlRegister ="http://192.168.1.6:80/cmobile_API/RegisterNewCustomer";
+ String myurl ="http://gdms.nodust-eg.com:80/Cmobile_API/ContactUs";
+ // String myurl ="http://192.168.1.2/mobile_API/cmobile_API/ContactUs";
+ String myurlSubmit ="http://gdms.nodust-eg.com:80/cmobile_API/Complaint";
   List<Contact> _subjects =[];
-
+  List<Contact> _categories =[Contact("services")];
   //// =[subject("1","Personal"),subject("2","Company")];
   String selectedChannel;
   String selectedClass;
+  String custid ="1";
+  String date="2019-12-20";
+  final textboxController = new TextEditingController();
+  String flag ="1";
 
   //StreamSubscription<ConnectivityResult> subscription;
 
@@ -61,7 +63,7 @@ class _ContactUs extends State<ContactUs> {
             new InputDecorator(
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(0.0),
-                labelText: 'channel',
+                labelText: 'Subject',
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -95,10 +97,10 @@ class _ContactUs extends State<ContactUs> {
     );
   }
 
-  /*_DropDownFormField_classification() {
+  _DropDownFormField_categories() {
     return FormField<String>(
       validator: (value) {
-        if (value == null) {
+        if (value == "") {
           print(selectedChannel);
           return "Please Select Account Type";
 
@@ -117,11 +119,11 @@ class _ContactUs extends State<ContactUs> {
             new InputDecorator(
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(0.0),
-                labelText: 'Account Type',
+                labelText: 'Sub Topic',
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  hint: new Text("Select Type Please"),
+                  hint: new Text("Select Topic Please"),
                   value: selectedClass,
                   onChanged: (String newValue) {
                     state.didChange(newValue);
@@ -129,13 +131,13 @@ class _ContactUs extends State<ContactUs> {
                       selectedClass = newValue;
                     });
                   },
-                //  items:  _clasification.map((subject map) {
-                 //   return new DropdownMenuItem<String>(
-                  //    value: map.channel_id,
-                 //     child: new Text(map.channel_name,
-                   //       style: new TextStyle(color: Colors.white)),
-                  //  );
-               //   }).toList(),
+                 items:  _categories.map((Contact map) {
+                  return new DropdownMenuItem<String>(
+                  value: map.subject,
+                     child: new Text(map.subject,
+                        style: new TextStyle(color: Colors.black)),
+                    );
+                }).toList(),
                 ),
               ),
             ),
@@ -150,20 +152,12 @@ class _ContactUs extends State<ContactUs> {
       },
     );
   }
-*/
+
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: AppBar(
-          title: Text('Contact Us'),
-
-        ),
-        body: Container(
-          child: Padding(
-           padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-            child: Form(
-              key: _formKey_,
+    return Form (
+      key: _formKey_,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -178,6 +172,7 @@ class _ContactUs extends State<ContactUs> {
 
                   ),
                   _DropDownFormField_contactus(),
+                  _DropDownFormField_categories(),
 
                   Container(
 
@@ -194,7 +189,8 @@ class _ContactUs extends State<ContactUs> {
                     padding: EdgeInsets.all(10),
                     width: 600,
                     height: 150,
-                    child: Center(child: TextFormField( maxLines: 3,),
+                    child: Center(child: TextFormField( maxLines: 3,
+                    controller:textboxController ,),
                     ),
                   ),
 
@@ -204,14 +200,14 @@ class _ContactUs extends State<ContactUs> {
 
                       Center(
                         child:Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 50),
+                          padding: EdgeInsets.symmetric(horizontal: 60),
 
                           child: Container(
 
                             child: Icon(
                               Icons.mail,
-                              size: 50.0,
-                              color: Colors.black26,
+                              size: 40.0,
+                              color: Colors.black,
                             ),
                           ),
                       ),
@@ -226,13 +222,35 @@ class _ContactUs extends State<ContactUs> {
                           child:Container(
                             child:Icon(
                             Icons.call,
-                          size: 50.0,
+                          size: 40.0,
 
-                          color: Colors.black26,
+                          color: Colors.black,
                           ),
                           ),
                         ),
                       ),
+
+                      Center(
+                        child:Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+
+                          child: SizedBox(
+
+                            height: 60.0,
+
+                            child: Image.asset(
+                              "images/images.png",
+                            //  fit: BoxFit.contain,
+                            //  color: Colors.black,
+
+                            ),
+                          ),
+                        ),
+                      ),
+
+
+
+
                     ],
                   ),
 
@@ -241,17 +259,19 @@ class _ContactUs extends State<ContactUs> {
                     children: <Widget>[
                       const Spacer(),
                       RaisedButton(
+
                         color: Colors.red,
                         textColor: Colors.white,
                         //onPressed:(),
-                     //   onPressed: _submittable() ? _submit : null,
+
+                        onPressed: submit_data,
                         child: const Text('Submit'),
                       ),
                     ],
                   ),
                 ],
               ),
-            ))));
+            );
   }
 
 
@@ -270,8 +290,7 @@ class _ContactUs extends State<ContactUs> {
     if(response.statusCode == 200) {
       print(response.body);
       contactusResponse jsonResponse = contactusResponse.fromJson(jsonDecode(response.body));
-      print("ssss");
-      print(jsonResponse.data[0].subject);
+
       if(jsonResponse != null && jsonResponse.state=="Success") {
         setState(() {
           _subjects = jsonResponse.data;
@@ -283,10 +302,21 @@ class _ContactUs extends State<ContactUs> {
 
   }
 
+ /* void _submit() {
+    bool validated =_formKey_.currentState.validate();
+    if (validated )
+    {
+      submit_data();
+    }
+    print('Form submitted');
+  }*/
+
   void submit_data() async{
 
 
-    var response = await  http.post(myurl,headers: {'subject':selectedChannel,});
+    var response = await  http.post(myurlSubmit,headers: {'CUSTOMERID':custid,'CATEGORY': selectedClass,'DATE':date,
+    'MESSAGE':textboxController.text,'FLAGSTATUS':flag,'SUBJECT':selectedChannel
+    });
     if(response.statusCode == 200) {
       print(response.body);
       contactusResponse jsonResponse = contactusResponse.fromJson(jsonDecode(response.body));
