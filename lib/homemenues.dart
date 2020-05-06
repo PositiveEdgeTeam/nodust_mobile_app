@@ -119,8 +119,14 @@ class _HomeMenuState extends State<HomeMenu> {
                 leading: Icon(Icons.person_add),
                 title: new Text('Invite'),
                 onTap: () {
+                  if(userLoad!=null)
                   Navigator.push(context,
                       new MaterialPageRoute(builder: (context) => new Invite()));
+                  else
+                    Navigator.of(context)
+                        .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
+                  return new Login();
+                  }));
                 },
               )
             ],

@@ -47,9 +47,22 @@ class _InviteState extends State<Invite> {
                     ),
                   ),
 
+                  SizedBox(
+                    width: 400,
+                    height:50 ,
+                    child: Container (
+                    child: Image.asset(
+                      "images/code.png",
+                    ),
+                    // margin:const EdgeInsets.only(left: 1.0,right: 20.0),
+                      padding: const EdgeInsets.only(right: 220.0),
+                    ),
+                  ),
+
 
 
                   TextFormField(initialValue: userLoad.customer_id.toString() +'-'+ userLoad.customer_phone.toString()),
+
 
 
                   Container(
@@ -61,6 +74,7 @@ class _InviteState extends State<Invite> {
 
 
                         child: Text('Invite Friends'),
+
                         color: Colors.red,
                       )
 
