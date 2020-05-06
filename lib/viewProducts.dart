@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 class ViewProducts extends StatefulWidget {
-  final myurl = "http://192.168.1.10/webPages/index.html";
+  final myurl = "http://gdms.nodust-eg.com/webPages_cmobile/index.html";
   const ViewProducts({Key key}) : super(key: key);
   @override
   _ViewProductsState createState() => _ViewProductsState(this.myurl,this.key);

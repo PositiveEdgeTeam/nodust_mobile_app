@@ -19,10 +19,10 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _agreedToTOS = false;
-  String myurl ="http://192.168.1.6:80/cmobile_API/GetChannels";
-  String myurlRegister ="http://192.168.1.6:80/cmobile_API/RegisterNewCustomer";
+  String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/GetChannels";
+  String myurlRegister ="http://gdms.nodust-eg.com:80/cmobile_API/RegisterNewCustomer";
   List<Channel> _channels =[];
-  List<Channel> _clasification =[Channel("1","Personal"),Channel("2","Company")];
+  List<Channel> _clasification =[Channel("1","Individual"),Channel("2","Company")];
   String selectedChannel;
   String selectedClass;
   final  usernameController = new TextEditingController();
@@ -34,7 +34,6 @@ class _RegisterFormState extends State<RegisterForm> {
   final parentphoneController = new TextEditingController();
 
   StreamSubscription<ConnectivityResult> subscription;
-
 
   _DropDownFormField_Channel() {
     return FormField<String>(
@@ -57,8 +56,9 @@ class _RegisterFormState extends State<RegisterForm> {
           children: <Widget>[
             new InputDecorator(
               decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(0.0),
-                labelText: 'channel',
+                  contentPadding: EdgeInsets.all(0.0),
+                  labelText: 'channel ',
+                  isMandatoryField: true
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -113,8 +113,9 @@ class _RegisterFormState extends State<RegisterForm> {
           children: <Widget>[
             new InputDecorator(
               decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(0.0),
-                labelText: 'Account Type',
+                  contentPadding: EdgeInsets.all(0.0),
+                  labelText: 'Account Type ',
+                  isMandatoryField: true
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -177,7 +178,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFormField(
                     controller: usernameController,
                     decoration: const InputDecoration(
-                      labelText: 'User Name',
+                        labelText: 'User Name ',
+                        isMandatoryField: true
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -189,7 +191,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFormField(
                     controller: nameController,
                     decoration: const InputDecoration(
-                      labelText: 'Full name',
+                      labelText: 'Full name ',
+                      isMandatoryField: true,
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -199,14 +202,19 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
+                    maxLength: 8,
                     controller: passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(
-                      labelText: 'Password',
+                      labelText: 'Password ',
+                      isMandatoryField: true,
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
                         return 'Password is required';
+                      }
+                      else if(value.trim().length<8){
+                        return 'Password must be 8 characters';
                       }
                     },
                   ),
@@ -215,16 +223,17 @@ class _RegisterFormState extends State<RegisterForm> {
                   _DropDownFormField_Channel(),
 
                   selectedChannel == "3" ?  TextFormField(
-                                controller: parentphoneController,
-                                decoration: const InputDecoration(
-                                labelText: 'Client Number',
-                                ),
-                                validator: (String value) {
-                                if (value.trim().isEmpty) {
-                                return 'Client Number is required';
-                                }
-                                },
-                                ):  const SizedBox(height: 1.0),
+                    controller: parentphoneController,
+                    decoration: const InputDecoration(
+                        labelText: 'Client Number',
+                        isMandatoryField: true
+                    ),
+                    validator: (String value) {
+                      if (value.trim().isEmpty) {
+                        return 'Client Number is required';
+                      }
+                    },
+                  ):  const SizedBox(height: 1.0),
                   const SizedBox(height: 16.0),
 
                   _DropDownFormField_classification(),
@@ -233,7 +242,8 @@ class _RegisterFormState extends State<RegisterForm> {
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
-                      labelText: 'Email',
+                        labelText: 'Email ',
+                        isMandatoryField: true
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -245,6 +255,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     controller: mobileController,
                     decoration: const InputDecoration(
                       labelText: 'Mobile ',
+                      isMandatoryField: true,
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -257,7 +268,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFormField(
                     controller: phoneController,
                     decoration: const InputDecoration(
-                      labelText: 'Phone ',
+                        labelText: 'Phone ',
+                        isMandatoryField: true
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -270,7 +282,6 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
             ),
           ),
-
           Row(
             children: <Widget>[
               const Spacer(),
@@ -387,22 +398,22 @@ class _RegisterFormState extends State<RegisterForm> {
     super.initState();
   }
 
- void _checkConnection()async{
-   var connectivityResult = await (Connectivity().checkConnectivity());
-   if (connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi) {
-     load_channles();
-     setState(() {
-       _agreedToTOS = true;
-     });
-   } else  {
-     print("no internet");
-     setState(() {
-       _agreedToTOS = false;
-     });
-     _showConnectLost();
+  void _checkConnection()async{
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi) {
+      load_channles();
+      setState(() {
+        _agreedToTOS = true;
+      });
+    } else  {
+      print("no internet");
+      setState(() {
+        _agreedToTOS = false;
+      });
+      _showConnectLost();
 
-   }
- }
+    }
+  }
   @override
   void dispose() {
     subscription.cancel();
@@ -412,9 +423,9 @@ class _RegisterFormState extends State<RegisterForm> {
   void _submit() {
     bool validated =_formKey.currentState.validate();
     if (validated )
-      {
-        submit_data();
-      }
+    {
+      submit_data();
+    }
     print('Form submitted');
   }
   void submit_data() async{
@@ -435,7 +446,7 @@ class _RegisterFormState extends State<RegisterForm> {
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
       }
       else{
-       // print(jsonResponse.message);
+        // print(jsonResponse.message);
         Fluttertoast.showToast(
           msg: jsonResponse.message ??  "Incorrect Email or Password",
           toastLength: Toast.LENGTH_LONG,

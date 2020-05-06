@@ -19,7 +19,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _isLoading = false;
-  String myurl ="http://gdms.nodust-eg.com/cmobile_API/LogIn";
+  String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/LogIn";
   final  usernameController = new TextEditingController();
   int _radioValue =1;
   final passwordController = new TextEditingController();
@@ -108,7 +108,7 @@ class _LoginState extends State<Login> {
                         onChanged: _handleRadioValueChange,
                       ),
                       new Text(
-                        'Personal',
+                        'Individual',
                         style: new TextStyle(fontSize: 16.0),
                       ),
 

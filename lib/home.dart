@@ -134,6 +134,7 @@ class _HomeState extends State<Home> {
     try {
       print("in function");
       User user = User.fromJson(await sharedPref.read("user_data"));
+      print(user.customer_name);
       setState(() {
         userLoad = user;
       });
@@ -145,6 +146,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    print("home");
     super.initState();
     loadSharedPrefs();
   }
