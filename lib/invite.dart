@@ -19,6 +19,7 @@ class _InviteState extends State<Invite> {
   SharedPref sharedPref = SharedPref();
   User userLoad;
   User anotherccount;
+  TextEditingController _controller= new TextEditingController();
 //String ID= userLoad.customer_id.toString();
   @override
   Widget build(BuildContext context) {
@@ -26,18 +27,52 @@ class _InviteState extends State<Invite> {
       appBar: AppBar(
           title: const Text('Invite'),
         ),
-        body: Center(
+      body:ListView(
+        children: <Widget>[
+          Center(
 
-            child: MaterialButton(onPressed: (){
-             FlutterOpenWhatsapp.sendSingleMessage( "" , userLoad.customer_id.toString() +'-'+ userLoad.customer_phone.toString());
-            // FlutterOpenWhatsapp.sendSingleMessage( "+2001061571669" , "hi");
-            },
+            child: Padding(
+              padding: const EdgeInsets.all(35.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
 
-              child: Text('Invite Friends'),
-              color: Colors.red,
-            )
-        ),
-      );
+                  SizedBox(
+                    width: 900,
+                    height:400 ,
+                    child: Image.asset(
+                      "images/1.jpg",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+
+
+
+                  TextFormField(initialValue: userLoad.customer_id.toString() +'-'+ userLoad.customer_phone.toString()),
+
+
+                  Container(
+                      child: MaterialButton(onPressed: (){
+                        FlutterOpenWhatsapp.sendSingleMessage( "" , userLoad.customer_id.toString() +'-'+ userLoad.customer_phone.toString());
+                        // FlutterOpenWhatsapp.sendSingleMessage( "+2001061571669" , "hi");
+                        //FlutterOpenWhatsapp.platformVersion;
+                      },
+
+
+                        child: Text('Invite Friends'),
+                        color: Colors.red,
+                      )
+
+                  ),
+                ],
+
+              ),
+            ),
+          ),
+        ],
+      ),);
+
 
   }
 
@@ -57,8 +92,11 @@ class _InviteState extends State<Invite> {
 
   @override
   void initState() {
-    super.initState();
-    loadSharedPrefs();
+
+
+      super.initState();
+      loadSharedPrefs();
+
   }
 
   loadSharedPrefs() async {
