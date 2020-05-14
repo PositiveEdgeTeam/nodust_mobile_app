@@ -52,6 +52,10 @@ class _ProfileState extends State<Profile> {
                     SizedBox(
                       height: 10.0,
                     ),
+                    new Text(userLoad.collection != null ? userLoad.collection: "collection" ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
                     new Text(userLoad != null ? "You Have "+userLoad.cards.toString()+" Contracts" : "customer_account",
                       style: TextStyle(
                         fontSize: 15,
