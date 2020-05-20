@@ -32,6 +32,8 @@ dependencies:
   webview_flutter :
    # flutter_contact: ^0.4.15
   connectivity:
+  google_maps_flutter: ^0.5.11
+  firebase_messaging: ^6.0.15
 
 
   #permission_handler:
