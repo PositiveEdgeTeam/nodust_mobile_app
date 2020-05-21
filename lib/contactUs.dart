@@ -379,7 +379,7 @@ class _ContactUs extends State<ContactUs> {
 
 
   void submit_data() async {
-    if ( selectedChannel != null ){
+    if (( selectedChannel != null && selectedClass!= null  && selectedChannel !="Others")||(selectedChannel =="Others")){
       var response = await http.post(myurlSubmit, headers: {
         'CUSTOMERID': userLoad.customer_id,
         'CATEGORY': selectedClass,

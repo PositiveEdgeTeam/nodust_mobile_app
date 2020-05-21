@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:nodustmobileapp/Models/cardsResponse.dart';
 import 'package:nodustmobileapp/Models/contractAddress.dart';
 import 'Models/cardDetails.dart';
+import 'package:geolocator/geolocator.dart';
+
 
 class ContractDetails extends StatefulWidget {
   final CardDetails contract_data;
@@ -27,6 +29,7 @@ class _ContractDetailsState extends State<ContractDetails> {
   String selectedAddress;
   String _oldAddress;
   String bodyRequest="";
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/CardAddresses";
   final  addressController = new TextEditingController();
   final  nameController = new TextEditingController();
@@ -366,6 +369,8 @@ class _ContractDetailsState extends State<ContractDetails> {
                 foregroundColor: Colors.blue,
                 onPressed: () {
                   _modalBottomSheetMenu(context);
+                  //_getLoction();
+                  _getCurrentLocation();
                 },
               ),
             ],
@@ -374,6 +379,30 @@ class _ContractDetailsState extends State<ContractDetails> {
       ),
     );
   }
+  void _getLoction()async{
+    print("geo");
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(position.altitude.toString() +","+ position.longitude.toString());
+
+  }
+
+
+  _getCurrentLocation() {
+    //print("xxxxx");
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+          print(position.longitude.toString());
+          print(position.latitude.toString());
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+
+
 
   void _modalBottomSheetMenu(BuildContext context) {
     nameController.text=contract_data.client_name;
@@ -381,6 +410,8 @@ class _ContractDetailsState extends State<ContractDetails> {
     mobileController.text=contract_data.contract_mobile;
     emailController.text=contract_data.contract_email;
     addressController.text="";
+    selectedAddress=_oldAddress;
+
     showModalBottomSheet(
         isScrollControlled:
         true, // Important: Makes content maxHeight = full device height
@@ -396,6 +427,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                   child: Wrap(
                     children: [
                       Form(
+                        key: _formKey,
                         child: Column(
                           children: <Widget>[
                             TextFormField(
@@ -485,41 +517,58 @@ class _ContractDetailsState extends State<ContractDetails> {
   }
 
   void request_update (BuildContext context){
-    bodyRequest="";
-    if(nameController.text != contract_data.client_name)
-      bodyRequest +="change Contract Client Name from "+contract_data.client_name+" to "+nameController.text;
-    if(phoneController.text != contract_data.contract_phone)
-    {
-      if (bodyRequest!="")
-        bodyRequest+=" , ";
-      bodyRequest +="change Contract phone from "+contract_data.contract_phone+" to "+phoneController.text;
+    bool validated =_formKey.currentState.validate();
+    if(selectedAddress == "new_address" && addressController.text=="" && validated)
+      {
+        Fluttertoast.showToast(
+          msg: "Please Scroll Down to Insert New Address",
+          toastLength: Toast.LENGTH_SHORT,
+        );
+        validated= false;
+      }
+    print("validation");
+    print(validated);
+    if(validated) {
+      bodyRequest = "";
+      if (nameController.text != contract_data.client_name)
+        bodyRequest +=
+            "change Contract Client Name from " + contract_data.client_name +
+                " to " + nameController.text;
+      if (phoneController.text != contract_data.contract_phone) {
+        if (bodyRequest != "")
+          bodyRequest += " , ";
+        bodyRequest +=
+            "change Contract phone from " + contract_data.contract_phone +
+                " to " + phoneController.text;
+      }
+      if (mobileController.text != contract_data.contract_mobile) {
+        if (bodyRequest != "")
+          bodyRequest += " , ";
+        bodyRequest +=
+            "change Mobile from " + contract_data.contract_mobile + " to " +
+                mobileController.text;
+      }
+      if (emailController.text != contract_data.contract_email) {
+        if (bodyRequest != "")
+          bodyRequest += " , ";
+        bodyRequest +=
+            "change Email from " + contract_data.contract_email + " to " +
+                emailController.text;
+      }
+      if (selectedAddress == "new_address" && addressController.text!="") {
+        if (bodyRequest != "")
+          bodyRequest += " , ";
+        bodyRequest += "Add new Address " + addressController.text;
+      }
+      else if (_oldAddress != selectedAddress) {
+        if (bodyRequest != "")
+          bodyRequest += " , ";
+        bodyRequest +=
+            "Change Address from " + _oldAddress + " to " + selectedAddress;
+      }
+      if (bodyRequest != "")
+        _submitChanges(context);
     }
-    if(mobileController.text != contract_data.contract_mobile)
-    {
-      if (bodyRequest!="")
-        bodyRequest+=" , ";
-      bodyRequest +="change Mobile from "+contract_data.contract_mobile+" to "+mobileController.text;
-    }
-    if(emailController.text != contract_data.contract_email)
-    {
-      if (bodyRequest!="")
-        bodyRequest+=" , ";
-      bodyRequest +="change Email from "+contract_data.contract_email+" to "+emailController.text;
-    }
-    if(selectedAddress == "new_address")
-    {
-      if (bodyRequest!="")
-        bodyRequest+=" , ";
-      bodyRequest +="Add new Address "+addressController.text;
-    }
-    else if (_oldAddress != selectedAddress){
-      if (bodyRequest!="")
-        bodyRequest+=" , ";
-      bodyRequest +="Change Address from "+_oldAddress+" to "+selectedAddress;
-
-    }
-    if(bodyRequest != "")
-      _submitChanges(context);
 
   }
   _DropDownFormField_Address() {

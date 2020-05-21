@@ -197,7 +197,7 @@ class _NestedTabBarState extends State<NestedTabBar>
   }
 
   _submitChanges (BuildContext context,String bodyRequest)async{
-    var response = await  http.post("http://192.168.1.6:80/cmobile_API/ActiveDeactiveContract",headers: {'CUSTOMERID':_customer_id,'REQUESTBODY':bodyRequest,'CARDID':_current_contract.card_no});
+    var response = await  http.post("http://gdms.nodust-eg.com:80/cmobile_API/ActiveDeactiveContract",headers: {'CUSTOMERID':_customer_id,'REQUESTBODY':bodyRequest,'CARDID':_current_contract.card_no});
     if(response.statusCode == 200) {
       CardResponse jsonResponse = CardResponse.fromJson(jsonDecode(response.body));
       if(jsonResponse != null && jsonResponse.state=="Done") {
@@ -216,7 +216,7 @@ class _NestedTabBarState extends State<NestedTabBar>
 
   void loadCardData () async
   {
-    var response = await  http.post("http://192.168.1.6:80/cmobile_API/CardDetails",headers: {'CARDID':_current_contract.card_no});
+    var response = await  http.post("http://gdms.nodust-eg.com:80/cmobile_API/CardDetails",headers: {'CARDID':_current_contract.card_no});
     if(response.statusCode == 200) {
       print(response.body);
       CardDataResponse jsonResponse = CardDataResponse.fromJson(jsonDecode(response.body));

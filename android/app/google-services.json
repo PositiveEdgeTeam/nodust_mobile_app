@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "598417616853",
+    "firebase_url": "https://no-dust-mobile-app.firebaseio.com",
+    "project_id": "no-dust-mobile-app",
+    "storage_bucket": "no-dust-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598417616853:android:02e39e527c73aec410575c",
+        "android_client_info": {
+          "package_name": "com.nodust.nodustmobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "598417616853-nu86actpt260ibqtcv187lur8cum13sg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyd8dykGfAgqqheRQur5iTNRpXgyLFIxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "598417616853-nu86actpt260ibqtcv187lur8cum13sg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598417616853:android:a896f00bdc87b86010575c",
+        "android_client_info": {
+          "package_name": "nodust_mobile_app.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "598417616853-nu86actpt260ibqtcv187lur8cum13sg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyd8dykGfAgqqheRQur5iTNRpXgyLFIxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "598417616853-nu86actpt260ibqtcv187lur8cum13sg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

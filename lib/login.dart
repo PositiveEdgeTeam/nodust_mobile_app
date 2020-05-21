@@ -10,6 +10,8 @@ import 'package:connectivity/connectivity.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Models/loginResponse.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 class Login extends StatefulWidget {
 
 
@@ -20,6 +22,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _isLoading = false;
   String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/LogIn";
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final  usernameController = new TextEditingController();
   int _radioValue =1;
   final passwordController = new TextEditingController();
@@ -98,7 +101,8 @@ class _LoginState extends State<Login> {
                   loginButon,
                   SizedBox(
                     height: 10.0,
-                  ),Row(
+                  ),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       new Radio(
@@ -166,7 +170,11 @@ class _LoginState extends State<Login> {
       _radioValue = value;
       });
   }
-
+  _register() {
+    _firebaseMessaging.getToken().then((token) {
+      print("token");
+      print(token);});
+  }
 
   @override
   void dispose() {
@@ -303,6 +311,7 @@ class _LoginState extends State<Login> {
           }
 
         //sharedPreferences.setString("customer_id", jsonResponse.data[0].customer_id);
+        _register();
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
       }
       else{

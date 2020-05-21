@@ -17,8 +17,8 @@ class MyCards extends StatefulWidget {
 }
 
 class _MyCardsState extends State<MyCards> {
-  String myurl ="http://192.168.1.6:80/cmobile_API/GetContracts";
-  String newContractUrl = "http://192.168.1.6:80/cmobile_API/RequestContract";
+  String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/GetContracts";
+  String newContractUrl = "http://gdms.nodust-eg.com:80/cmobile_API/RequestContract";
   User userLoad;
   bool _agreedToTOS = false;
   SharedPref sharedPref = SharedPref();

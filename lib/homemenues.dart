@@ -12,6 +12,7 @@ import 'ClaimYourPoints.dart';
 import 'Models/sharedPref.dart';
 import 'Notifications.dart';
 import 'login.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HomeMenu extends StatefulWidget {
   HomeMenu({Key key, this.title}) : super(key: key);
@@ -24,6 +25,8 @@ class HomeMenu extends StatefulWidget {
 class _HomeMenuState extends State<HomeMenu> {
   User userLoad;
   int _currentIndex = 0;
+  String _message = '';
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   SharedPref sharedPref = SharedPref();
   List<Widget> _children = List<Widget>();/* = [ViewProducts( key: PageStorageKey('Page1'),)
     ,AboutUs( key: PageStorageKey('Page2'))
@@ -38,6 +41,7 @@ class _HomeMenuState extends State<HomeMenu> {
     _children.add(ViewProducts( key: PageStorageKey('Page1')));
     super.initState();
     loadSharedPrefs();
+    getMessage();
   }
 
   @override
@@ -221,6 +225,20 @@ class _HomeMenuState extends State<HomeMenu> {
       // do something
       print("in Execption");
     }
+  }
+  void getMessage(){
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print('on message $message');
+          setState(() => _message = message["notification"]["title"]);
+        },
+        onResume: (Map<String, dynamic> message) async {
+      print('on resume $message');
+      setState(() => _message = message["notification"]["title"]);
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print('on launch $message');
+      setState(() => _message = message["notification"]["title"]);
+    });
   }
 
 }
