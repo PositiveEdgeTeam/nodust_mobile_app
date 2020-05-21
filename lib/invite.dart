@@ -61,7 +61,8 @@ class _InviteState extends State<Invite> {
 
 
 
-                  TextFormField(initialValue: userLoad.customer_id.toString() +'-'+ userLoad.customer_phone.toString()),
+                  TextFormField(initialValue: userLoad.customer_id.toString() +'-'+ userLoad.customer_phone.toString()
+                  ,readOnly: true,),
 
 
 
@@ -71,7 +72,6 @@ class _InviteState extends State<Invite> {
                         // FlutterOpenWhatsapp.sendSingleMessage( "+2001061571669" , "hi");
                         //FlutterOpenWhatsapp.platformVersion;
                       },
-
 
                         child: Text('Invite Friends'),
 

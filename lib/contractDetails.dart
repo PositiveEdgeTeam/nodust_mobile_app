@@ -44,10 +44,10 @@ class _ContractDetailsState extends State<ContractDetails> {
       if(jsonResponse != null && jsonResponse.state=="Success") {
         String current_address;
         for(int i =0;i<jsonResponse.data.length;i++)
-          {
-            if(jsonResponse.data[i].active=="1")
-              current_address=jsonResponse.data[i].address_id;
-          }
+        {
+          if(jsonResponse.data[i].active=="1")
+            current_address=jsonResponse.data[i].address_id;
+        }
         setState(() {
           _addresses = jsonResponse.data;
           _addresses.add(new ContractAddress("Add New", "0", "new_address"));
@@ -285,8 +285,8 @@ class _ContractDetailsState extends State<ContractDetails> {
                     ),
                     Text(
                       contract_data != null
-                          ? contract_data.street_name
-                          : "street",
+                          ? contract_data.address
+                          : "address",
                       maxLines: 2,
                     ),
                   ],
@@ -392,7 +392,7 @@ class _ContractDetailsState extends State<ContractDetails> {
               duration: const Duration(milliseconds: 100),
               curve: Curves.decelerate,
               child: Container(
-                padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
                   child: Wrap(
                     children: [
                       Form(
@@ -404,7 +404,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                                   labelText: 'Customer Name ',
                                   isMandatoryField: true
                               ),
-                            //  initialValue: contract_data.client_name,
+                              //  initialValue: contract_data.client_name,
                               validator: (String value) {
                                 if (value.trim().isEmpty) {
                                   return 'Customer is required';
@@ -417,7 +417,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                                   isMandatoryField: true
                               ),
                               keyboardType: TextInputType.phone,
-                             // initialValue: contract_data.contract_phone,
+                              // initialValue: contract_data.contract_phone,
                               controller: phoneController,
                               validator: (String value) {
                                 if (value.trim().isEmpty) {
@@ -446,7 +446,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                               ),
                               keyboardType: TextInputType.emailAddress,
                               controller: emailController,
-                             // initialValue: contract_data.contract_email,
+                              // initialValue: contract_data.contract_email,
                               validator: (String value) {
                                 if (value.trim().isEmpty) {
                                   return 'Email is required';
@@ -489,11 +489,11 @@ class _ContractDetailsState extends State<ContractDetails> {
     if(nameController.text != contract_data.client_name)
       bodyRequest +="change Contract Client Name from "+contract_data.client_name+" to "+nameController.text;
     if(phoneController.text != contract_data.contract_phone)
-      {
-        if (bodyRequest!="")
-          bodyRequest+=" , ";
-        bodyRequest +="change Contract phone from "+contract_data.contract_phone+" to "+phoneController.text;
-      }
+    {
+      if (bodyRequest!="")
+        bodyRequest+=" , ";
+      bodyRequest +="change Contract phone from "+contract_data.contract_phone+" to "+phoneController.text;
+    }
     if(mobileController.text != contract_data.contract_mobile)
     {
       if (bodyRequest!="")
@@ -513,9 +513,9 @@ class _ContractDetailsState extends State<ContractDetails> {
       bodyRequest +="Add new Address "+addressController.text;
     }
     else if (_oldAddress != selectedAddress){
-          if (bodyRequest!="")
-            bodyRequest+=" , ";
-          bodyRequest +="Change Address from "+_oldAddress+" to "+selectedAddress;
+      if (bodyRequest!="")
+        bodyRequest+=" , ";
+      bodyRequest +="Change Address from "+_oldAddress+" to "+selectedAddress;
 
     }
     if(bodyRequest != "")

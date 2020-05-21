@@ -111,8 +111,14 @@ class _HomeMenuState extends State<HomeMenu> {
                 leading: Icon(Icons.call),
                 title: new Text('Contact Us'),
                 onTap: () {
-                  Navigator.push(context,
-                      new MaterialPageRoute(builder: (context) => new Contactpage()));
+                  if(userLoad!=null)
+                    Navigator.push(context,
+                        new MaterialPageRoute(builder: (context) => new Contactpage()));
+                  else
+                    Navigator.of(context)
+                        .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
+                      return new Login();
+                    }));
                 },
               ),
               new ListTile(

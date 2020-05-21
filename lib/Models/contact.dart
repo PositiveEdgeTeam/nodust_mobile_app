@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class Contact{
   String subject;
-  List<dynamic> category;
+  List<String> category;
 
 
 

@@ -17,7 +17,7 @@ class _ContactpageState extends State<Contactpage> {
       body:const SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-          child: ContactUs(),
+         child: ContactUs(),
         ),
       ),
     );
