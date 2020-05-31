@@ -396,6 +396,11 @@ class _ContractDetailsState extends State<ContractDetails> {
         .then((Position position) {
           print(position.longitude.toString());
           print(position.latitude.toString());
+          Fluttertoast.showToast(
+            msg: position.longitude.toString()+","+position.latitude.toString(),
+            toastLength: Toast.LENGTH_LONG,
+          );
+
     }).catchError((e) {
       print(e);
     });

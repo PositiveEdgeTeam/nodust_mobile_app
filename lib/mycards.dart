@@ -143,7 +143,8 @@ class _MyCardsState extends State<MyCards> {
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       print(result);
       if (result == ConnectivityResult.mobile ||result == ConnectivityResult.wifi) {
-        loadCards();
+        if(userLoad!= null)
+          loadCards();
         setState(() {
           _agreedToTOS = true;
         });
@@ -221,7 +222,8 @@ class _MyCardsState extends State<MyCards> {
         print("inside _connection");
         _agreedToTOS = true;
       });
-      loadCards();
+      if(userLoad != null)
+        loadCards();
     } else  {
       print("no internet");
       setState(() {
