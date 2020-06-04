@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:nodustmobileapp/Models/category.dart';
 import 'package:nodustmobileapp/Models/contact.dart';
 import 'package:nodustmobileapp/Models/channelResponse.dart';
 import 'package:nodustmobileapp/Models/contactusResponse.dart';
@@ -32,11 +33,11 @@ class _ContactUs extends State<ContactUs> {
   User userLoad;
   User anotherccount;
   final String phone = 'tel:02 35352700';
- String myurl ="http://192.168.1.9:80/cmobile_API/ContactUs";
+ String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/ContactUs";
  // String myurl ="http://192.168.1.10/mobile_API/cmobile_API/ContactUs";
- String myurlSubmit ="http://192.168.1.9:80/cmobile_API/Complaint";
+ String myurlSubmit ="http://gdms.nodust-eg.com:80/cmobile_API/Complaint";
   List<Contact> _subjects =[];
-  List<String> _categories =[];
+  List<Category> _categories =[];
   int selectedIndex ;
   //// =[subject("1","Personal"),subject("2","Company")];
   String selectedChannel;
@@ -81,9 +82,12 @@ class _ContactUs extends State<ContactUs> {
                   onChanged: (String newValue) {
                     state.didChange(newValue);
                     setState(() {
+                    //  print (newValue);
+                     // print(_subjects);
                       selectedChannel = newValue;
-                      for(int i =0 ;i <_subjects.length;i++) {
-                        if(_subjects[i].subject==newValue) {
+
+                    for(int i =0 ;i <_subjects.length;i++) {
+                        if(_subjects[i].subject_id==newValue) {
                           selectedIndex=i;
                           _categories = _subjects[i].category;
                           break;
@@ -94,7 +98,7 @@ class _ContactUs extends State<ContactUs> {
                   },
                 items:  _subjects.map((Contact map) {
                     return new DropdownMenuItem<String>(
-                     value: map.subject,
+                     value: map.subject_id,
                      child: new Text(map.subject,
                      style: new TextStyle(color: Colors.black)),
                   );
@@ -137,7 +141,7 @@ class _ContactUs extends State<ContactUs> {
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(0.0),
                 labelText: 'Sub Topic',
-                //  isMandatoryField: true
+                 isMandatoryField: true
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -149,10 +153,10 @@ class _ContactUs extends State<ContactUs> {
                       selectedClass = newValue;
                     });
                   },
-                 items:  _categories.map((String map) {
+                 items:  _categories.map((Category map) {
                   return new DropdownMenuItem<String>(
-                  value: map,
-                     child: new Text(map,
+                  value: map.category_id,
+                     child: new Text(map.category_name,
                         style: new TextStyle(color: Colors.black)),
                     );
                 }).toList(),
@@ -195,7 +199,6 @@ class _ContactUs extends State<ContactUs> {
                   _DropDownFormField_contactus(),
                   if(selectedIndex!=null && _subjects[selectedIndex].category!=null)
                     _DropDownFormField_categories(),
-
 
 
                   Container(
@@ -379,7 +382,7 @@ class _ContactUs extends State<ContactUs> {
 
 
   void submit_data() async {
-    if (( selectedChannel != null && selectedClass!= null  && selectedChannel !="Others")||(selectedChannel =="Others")){
+    if (( selectedChannel != null && selectedClass!= null  && selectedChannel !="2")||(selectedChannel =="2")){
       var response = await http.post(myurlSubmit, headers: {
         'CUSTOMERID': userLoad.customer_id,
         'CATEGORY': selectedClass,
