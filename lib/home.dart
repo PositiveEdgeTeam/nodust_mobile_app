@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nodustmobileapp/Models/sharedPref.dart';
 import 'package:nodustmobileapp/Models/user.dart';
+import 'package:nodustmobileapp/Models/userDb.dart';
 import 'login.dart';
-
+import 'package:nodustmobileapp/Database/database';
 class Home extends StatefulWidget {
   //final String title;
   @override
@@ -12,6 +13,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   SharedPref sharedPref = SharedPref();
   User userLoad;
+  final dbHelper = DBProvider.db;
+
   @override
   Widget build(BuildContext context) {
     final userData_card =  Container(
@@ -21,17 +24,25 @@ class _HomeState extends State<Home> {
           Container(
             child:Column(
               children: <Widget>[
-                Text( userLoad != null ? userLoad.customer_name: "customer_name"
-                  ,style: TextStyle(
-                    fontWeight: FontWeight.bold ,
-                    fontSize: 20,
+                Container(
+                  child: Text( userLoad != null ? userLoad.customer_name: "customer_name"
+                    ,style: TextStyle(
+                      fontWeight: FontWeight.bold ,
+                      fontSize: 20,
+                    ),
+                   // overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      textAlign: TextAlign.center
                   ),
+                  width:200 ,
+
                 ),
                 Text( userLoad != null ? userLoad.customer_mobile: "customer_mobile"
                   ,style: TextStyle(
                     fontWeight: FontWeight.bold ,
                     fontSize: 15,
-                  ),)
+                  ),
+                textAlign: TextAlign.center,)
               ],
             ) ,
             margin: EdgeInsets.symmetric(horizontal: 15 ,vertical: 10),
@@ -138,6 +149,8 @@ class _HomeState extends State<Home> {
       setState(() {
         userLoad = user;
       });
+      getCount();
+
     } catch (Excepetion) {
       // do something
       print("in Execption");
@@ -149,9 +162,16 @@ class _HomeState extends State<Home> {
     print("home");
     super.initState();
     loadSharedPrefs();
+
   }
 
-
+  void getCount() async {
+    // Assuming that the number of rows is the id for the last row.
+    int  count = await dbHelper.getUsersCount();
+    print('count'+count.toString());
+    UserDb currentuser= await dbHelper.getUser(int.parse(userLoad.customer_id));
+    print("cuurent_user"+currentuser.username+"-"+currentuser.password);
+  }
 }
 
 

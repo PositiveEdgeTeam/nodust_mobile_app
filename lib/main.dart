@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nodustmobileapp/homemenues.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
-import 'package:nodustmobileapp/login.dart';
-import 'home.dart';
+
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +14,7 @@ Future<void> main() async{
     //_defaultHome = new Login();
     //MyHomePage(title: ' No Dust'),
 
-  runApp(new MaterialApp(
+  runApp( new MaterialApp(
     title: 'NoDust',
     theme: ThemeData(
       primarySwatch: Colors.red,

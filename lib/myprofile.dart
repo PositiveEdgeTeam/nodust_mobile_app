@@ -1,8 +1,15 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nodustmobileapp/Models/loginResponse.dart';
 import 'package:nodustmobileapp/Models/sharedPref.dart';
 import 'package:nodustmobileapp/Models/user.dart';
+import 'package:nodustmobileapp/Models/userDb.dart';
 import 'package:nodustmobileapp/homemenues.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nodustmobileapp/Database/database';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class Profile extends StatefulWidget {
   // This widget is the root of your application.
@@ -13,7 +20,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   SharedPref sharedPref = SharedPref();
   User userLoad;
+  String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/LogIn";
+  final dbHelper = DBProvider.db;
   User anotherccount;
+  List<UserDb> another_accounts;
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -61,7 +71,7 @@ class _ProfileState extends State<Profile> {
                         fontSize: 15,
                       ),),
                     SizedBox(
-                      height: 30.0,
+                      height: 20.0,
                     ),
 
                      Center(
@@ -116,7 +126,7 @@ class _ProfileState extends State<Profile> {
 
                      ),
                     SizedBox(
-                      height: anotherccount != null ? 10: 45,
+                      height: (another_accounts == null|| another_accounts.length==0) ? 45: 10,
                     ),
                     FlatButton(
                       onPressed:logOut
@@ -128,18 +138,18 @@ class _ProfileState extends State<Profile> {
                       ),
                       textColor: Colors.blue,
                     ),
-                    anotherccount != null ? FlatButton(
-                      onPressed: swapAccount,
+                    (another_accounts == null|| another_accounts.length==0) ? SizedBox(
+                      height:1,
+                    ):FlatButton(
+                      onPressed: (){_modalBottomSheetMenu(context);},
                       child: Text("Switch Account" ,
                           style: TextStyle(
                             fontSize: 20,
                           )
                       ),
                       textColor: Colors.blue,
-                    ):
-                    SizedBox(
-                      height:1,
-                    ),
+                    )
+
                   ],
 
                 )
@@ -151,18 +161,40 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  swapAccount () async
-  {
-    sharedPref.save("user_data", anotherccount.toJson());
-    sharedPref.save("another_account",userLoad.toJson());
-    setState(() {
-      User swap = userLoad;
-      userLoad = anotherccount;
-      anotherccount = swap;
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
+  signIn(UserDb user) async {
+    var status = await OneSignal.shared.getPermissionSubscriptionState();
+    var playerId = status.subscriptionStatus.userId;
+    var response = await  http.post(myurl,headers: {'USERNAME':user.username,'PASSWORD': user.password,'TOKEN':playerId,'TYPE':user.classification});
+    if(response.statusCode == 200) {
+      print(response.body);
+      LoginResponse jsonResponse = LoginResponse.fromJson(jsonDecode(response.body));
+      if(jsonResponse != null && jsonResponse.state=="ok") {
 
-    });
+        SharedPref sharedPref = SharedPref();
+        for(int i =0;i<jsonResponse.data.length;i++)
+        {
+          if(jsonResponse.data[i].selected=="1") {
+            sharedPref.save("user_data", jsonResponse.data[i]);
+          }
+          else
+            sharedPref.save("another_account", jsonResponse.data[i]);
 
+        }
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
+      }
+      else{
+        print(jsonResponse.message);
+        Fluttertoast.showToast(
+          msg: jsonResponse.message ??  "Incorrect Email or Password",
+          toastLength: Toast.LENGTH_LONG,
+        );
+      }
+    }
+    else {
+      setState(() {
+      });
+      print(response.body);
+    }
   }
 
   logOut () async{
@@ -187,7 +219,23 @@ class _ProfileState extends State<Profile> {
     } catch (Excepetion) {
       // do something
       print("in Execption 1");
+
     }
+    int  count = await dbHelper.getUsersCount();
+    print("count"+count.toString());
+    if(count>1)
+      {
+        List<UserDb> accounts= await  dbHelper.getAllUsers(int.parse(userLoad.customer_id));
+        for(int i=0 ; i<accounts.length;i++)
+          {
+            print("accounts"+accounts[i].username+accounts[i].password);
+          }
+        setState(() {
+          another_accounts=accounts;
+        });
+      }
+
+    /*
 
     try {
       User user = User.fromJson(await sharedPref.read("another_account"));
@@ -199,5 +247,55 @@ class _ProfileState extends State<Profile> {
       print("in Execption 2");
     }
 
+     */
+
+  }
+  void _modalBottomSheetMenu(BuildContext context) {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+        backgroundColor: Colors.white,
+        isScrollControlled: true, // Important: Makes content maxHeight = full device height
+        context: context,
+        builder: (context) {
+          return AnimatedPadding(
+              padding: MediaQuery.of(context).viewInsets,
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.decelerate,
+              child: Container(
+                  padding: EdgeInsets.all(10),
+                  child: Wrap(
+                    children: [
+                    new ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount:another_accounts.length,
+                      itemBuilder: (context, i) {
+                        return new ListTile(
+                          title: new Text(
+                            another_accounts[i].username,
+                            style: new TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black),
+                          ),
+                          trailing: IconButton(icon: Icon(Icons.delete),onPressed: (){
+                            dbHelper.deleteUser(another_accounts[i].username);
+                            setState(() {
+                              another_accounts.removeAt(i);
+                            });
+                            Navigator.pop(context);
+                          },),
+                         onTap: (){
+                            print(another_accounts[i].username);
+                            signIn(another_accounts[i]);
+                         },
+                        );
+
+                      }
+                    ),
+                    ],
+                  )));
+        });
   }
 }

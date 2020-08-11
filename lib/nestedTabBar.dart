@@ -25,6 +25,7 @@ class NestedTabBar extends StatefulWidget {
 
   @override
   _NestedTabBarState createState() {
+    print(current_contract.card_no+" yyyyy "+customer_id);
     return new _NestedTabBarState(current_contract,customer_id);
   }
 }
@@ -84,7 +85,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                       fontWeight: FontWeight.bold ,
                       fontSize: 15,
                     ),),
-                    Text(_currentData != null?_currentData.details.next_delivery_date:"dATE"),
+                    Text(_currentData != null && _currentData.details.next_delivery_date!=null?_currentData.details.next_delivery_date:"dATE"),
                   ],
                 ),
                 Row(

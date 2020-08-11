@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nodustmobileapp/Models/sharedPref.dart';
+import 'package:nodustmobileapp/Models/userDb.dart';
 import 'package:nodustmobileapp/homemenues.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nodustmobileapp/register.dart';
@@ -10,7 +11,9 @@ import 'package:connectivity/connectivity.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Models/loginResponse.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:nodustmobileapp/Database/database';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Login extends StatefulWidget {
 
@@ -22,8 +25,9 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _isLoading = false;
   String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/LogIn";
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  //final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final  usernameController = new TextEditingController();
+  final dbHelper = DBProvider.db;
   int _radioValue =1;
   final passwordController = new TextEditingController();
   bool _agreedToTOS = false;
@@ -170,10 +174,19 @@ class _LoginState extends State<Login> {
       _radioValue = value;
       });
   }
-  _register() {
-    _firebaseMessaging.getToken().then((token) {
+  _register() async {
+    var status = await OneSignal.shared.getPermissionSubscriptionState();
+
+    var playerId = status.subscriptionStatus.userId;
+    print("token");
+    print(playerId);
+    signIn(playerId);
+    /*_firebaseMessaging.getToken().then((token) {
       print("token");
-      print(token);});
+      print(token);
+
+    });*/
+
   }
 
   @override
@@ -186,7 +199,7 @@ class _LoginState extends State<Login> {
     if(usernameController.text.isNotEmpty&&passwordController.text.isNotEmpty)
       {
       if(_agreedToTOS )
-        signIn();
+        _register();
       else
         _showConnectLost();
       }
@@ -286,11 +299,11 @@ class _LoginState extends State<Login> {
               )
           );
         }
-  signIn() async {
+  signIn(String token) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var jsonResponse = null;
    // print("sssss"+_radioValue.toString());
-    var response = await  http.post(myurl,headers: {'USERNAME':usernameController.text,'PASSWORD': passwordController.text,'TYPE':_radioValue.toString()});
+    var response = await  http.post(myurl,headers: {'USERNAME':usernameController.text,'PASSWORD': passwordController.text,'TOKEN':token,'TYPE':_radioValue.toString()});
     if(response.statusCode == 200) {
       print(response.body);
       LoginResponse jsonResponse = LoginResponse.fromJson(jsonDecode(response.body));
@@ -299,19 +312,22 @@ class _LoginState extends State<Login> {
           _isLoading = false;
         });
         SharedPref sharedPref = SharedPref();
+        sharedPref.remove("registerd_user");
         //List<User> accounts = jsonResponse.data;
         //print("length"+ accounts.length.toString());
         for(int i =0;i<jsonResponse.data.length;i++)
           {
-            if(jsonResponse.data[i].selected=="1")
+            if(jsonResponse.data[i].selected=="1") {
               sharedPref.save("user_data", jsonResponse.data[i]);
+              insert_database(jsonResponse.data[i].customer_id);
+            }
             else
               sharedPref.save("another_account", jsonResponse.data[i]);
 
           }
-
+        //insert_database();
         //sharedPreferences.setString("customer_id", jsonResponse.data[0].customer_id);
-        _register();
+       // _register();
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
       }
       else{
@@ -328,6 +344,10 @@ class _LoginState extends State<Login> {
       });
       print(response.body);
     }
+  }
+  void insert_database(String id) async {
+    UserDb newUser= UserDb(id: int.parse(id),password: passwordController.text,username: usernameController.text,classification: _radioValue.toString());
+   dbHelper.newUser(newUser);
   }
 
 }

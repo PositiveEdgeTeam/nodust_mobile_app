@@ -6,8 +6,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:nodustmobileapp/Models/channel.dart';
 import 'package:nodustmobileapp/Models/channelResponse.dart';
+import 'package:nodustmobileapp/Models/sharedPref.dart';
 import 'package:nodustmobileapp/homemenues.dart';
 import 'package:connectivity/connectivity.dart';
+
+import 'Models/registerResponse.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key key}) : super(key: key);
@@ -21,15 +24,20 @@ class _RegisterFormState extends State<RegisterForm> {
   bool _agreedToTOS = false;
   String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/GetChannels";
   String myurlRegister ="http://gdms.nodust-eg.com:80/cmobile_API/RegisterNewCustomer";
+      //"http://gdms.nodust-eg.com:80/cmobile_API/RegisterNewCustomer";
   List<Channel> _channels =[];
   List<Channel> _clasification =[Channel("1","Individual"),Channel("2","Company")];
   String selectedChannel;
   String selectedClass;
+  String username_state = "0";
+  String mobile_state = "0";
+  String phone_state = "0";
+  String email_state = "0";
   final  usernameController = new TextEditingController();
   final  passwordController = new TextEditingController();
   final  nameController = new TextEditingController();
   final  emailController = new TextEditingController();
-  final  mobileController = new TextEditingController();
+  final  mobileController = new TextEditingController(text: "01");
   final  phoneController = new TextEditingController();
   final parentphoneController = new TextEditingController();
 
@@ -181,10 +189,30 @@ class _RegisterFormState extends State<RegisterForm> {
                         labelText: 'User Name ',
                         isMandatoryField: true
                     ),
+                    onEditingComplete:(){
+                      setState(() {
+                        if(username_state=="1") {
+                          username_state = "0";
+                          _formKey.currentState.validate();
+                        }
+                      });
+                    },
                     validator: (String value) {
                       if (value.trim().isEmpty) {
                         return 'UserName is required';
                       }
+                      else if(username_state != "0")
+                        {
+                          return 'UserName Must Be Unique';
+                        }
+                    },
+                    onChanged: (String value){
+                      setState(() {
+                        if(username_state=="1") {
+                          username_state = "0";
+                          _formKey.currentState.validate();
+                        }
+                      });
                     },
                   ),
                   const SizedBox(height: 16.0),
@@ -240,16 +268,17 @@ class _RegisterFormState extends State<RegisterForm> {
                   const SizedBox(height: 16.0),
                   TextFormField(
                     controller: emailController,
+                    onChanged: (String value){
+                      setState(() {
+                        email_state="0";
+                      });
+                    },
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                         labelText: 'Email ',
                         isMandatoryField: true
                     ),
-                    validator: (String value) {
-                      if (value.trim().isEmpty) {
-                        return 'Email is required';
-                      }
-                    },
+                    validator:validateEmail ,
                   ),
                   TextFormField(
                     controller: mobileController,
@@ -257,11 +286,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       labelText: 'Mobile ',
                       isMandatoryField: true,
                     ),
-                    validator: (String value) {
-                      if (value.trim().isEmpty) {
-                        return 'Mobile is required';
-                      }
-                    },
+                    validator: validateMobile,
                     keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 16.0),
@@ -271,11 +296,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         labelText: 'Phone ',
                         isMandatoryField: true
                     ),
-                    validator: (String value) {
-                      if (value.trim().isEmpty) {
-                        return 'Phone is required';
-                      }
-                    },
+                    validator: validatePhone,
                     keyboardType: TextInputType.phone,
                   ),
                 ],
@@ -398,6 +419,66 @@ class _RegisterFormState extends State<RegisterForm> {
     super.initState();
   }
 
+  String validateMobile(String value) {
+// Indian Mobile number are of 10 digit only
+    Pattern pattern =
+        r'^(010|011|012|015)[0-9]{8}$';
+    RegExp regex = new RegExp(pattern);
+    if (value.trim().isEmpty) {
+      return 'Mobile is required';
+    }
+    else if (!regex.hasMatch(value)) {
+      return 'Enter Valid Mobile Number';
+    }
+    else if (mobile_state!="0")
+    {
+      return 'Mobile is already Exist';
+    }
+    else if (value.length != 11)
+      return 'Mobile Number must be of 11 digit';
+    else
+      return null;
+  }
+
+
+  String validatePhone(String value) {
+// Indian Mobile number are of 10 digit only
+    Pattern pattern =
+        r'^(0)[0-9]{8,9}$';
+    RegExp regex = new RegExp(pattern);
+    if (value.trim().isEmpty) {
+      return 'Phone is required';
+    }
+    else if (!regex.hasMatch(value)) {
+      return 'Enter Valid Phone Number';
+    }
+    else if (mobile_state!="0")
+    {
+      return 'Phone is already Exist';
+    }
+    else if (value.length > 10 || value.length < 9 )
+      return 'Mobile Number must be 10 or 9 digits';
+    else
+      return null;
+  }
+
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (value.trim().isEmpty) {
+      return 'Email is required';
+    }
+    else if (!regex.hasMatch(value)) {
+      return 'Enter Valid Email';
+    }
+    else if(email_state!="0")
+    {
+      return 'Email is already Exist';
+    }
+    else
+      return null;
+  }
   void _checkConnection()async{
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi) {
@@ -422,6 +503,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   void _submit() {
     bool validated =_formKey.currentState.validate();
+    print("validate"+validated.toString());
     if (validated )
     {
       submit_data();
@@ -429,15 +511,20 @@ class _RegisterFormState extends State<RegisterForm> {
     print('Form submitted');
   }
   void submit_data() async{
-
-
+    email_state="0";
+    username_state="0";
+    phone_state="0";
+    mobile_state="0";
+    Map map ={'NAME':nameController.text,};
+    var body = json.encode(map);
     var response = await  http.post(myurlRegister,headers: {'USERNAME':usernameController.text,'PASSWORD': passwordController.text,'CHANNEL':selectedChannel,
-      'CLASSIFICATION':selectedClass,'PARENTPHONE':parentphoneController.text,'EMAIL':emailController.text,'MOBILENUMBER':mobileController.text,'PHONE':phoneController.text,
-      'NAME':nameController.text});
+      'CLASSIFICATION':selectedClass,'PARENTPHONE':parentphoneController.text,'EMAIL':emailController.text,'MOBILENUMBER':mobileController.text,'PHONE':phoneController.text},body: body);
+    SharedPref sharedPref = SharedPref();
     if(response.statusCode == 200) {
       print(response.body);
-      ChannelResponse jsonResponse = ChannelResponse.fromJson(jsonDecode(response.body));
+      RegisterResponse jsonResponse = RegisterResponse.fromJson(jsonDecode(response.body));
       if(jsonResponse != null && jsonResponse.state=="Done") {
+        sharedPref.save("registerd_user", jsonResponse.data);
         Fluttertoast.showToast(
           msg: jsonResponse.message ??  "Incorrect Email or Password",
           toastLength: Toast.LENGTH_LONG,
@@ -451,6 +538,17 @@ class _RegisterFormState extends State<RegisterForm> {
           msg: jsonResponse.message ??  "Incorrect Email or Password",
           toastLength: Toast.LENGTH_LONG,
         );
+        setState(() {
+          if (jsonResponse.code =="1")
+            username_state="1";
+          else if(jsonResponse.code=="2")
+            mobile_state="1";
+          else if(jsonResponse.code =="3")
+            phone_state="1";
+          else
+            email_state="1";
+        });
+        _submit();
       }
     }
 

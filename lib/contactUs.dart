@@ -6,10 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:nodustmobileapp/Models/category.dart';
 import 'package:nodustmobileapp/Models/contact.dart';
-import 'package:nodustmobileapp/Models/channelResponse.dart';
 import 'package:nodustmobileapp/Models/contactusResponse.dart';
 import 'package:nodustmobileapp/homemenues.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -30,8 +28,8 @@ class _ContactUs extends State<ContactUs> {
   final GlobalKey<FormState> _formKey_ = GlobalKey<FormState>();
   bool _agreedToTOS = false;
   SharedPref sharedPref = SharedPref();
+  String regiserd_user="";
   User userLoad;
-  User anotherccount;
   final String phone = 'tel:02 35352700';
  String myurl ="http://gdms.nodust-eg.com:80/cmobile_API/ContactUs";
  // String myurl ="http://192.168.1.10/mobile_API/cmobile_API/ContactUs";
@@ -155,7 +153,7 @@ class _ContactUs extends State<ContactUs> {
                   },
                  items:  _categories.map((Category map) {
                   return new DropdownMenuItem<String>(
-                  value: map.category_id,
+                  value: map.request_type_id,
                      child: new Text(map.category_name,
                         style: new TextStyle(color: Colors.black)),
                     );
@@ -284,37 +282,10 @@ class _ContactUs extends State<ContactUs> {
 
     super.initState();
     loadSharedPrefs();
-    load_channles();
 
   }
 
-  bool _submittable() {
-    return _agreedToTOS;
-  }
 
-
-
-  void _submit() {
-    bool validated =_formKey_.currentState.validate();
-    if (validated )
-    {
-      submit_data();
-    }
-    print('Form submitted');
-  }
-  swapAccount () async
-  {
-    sharedPref.save("user_data", anotherccount.toJson());
-    sharedPref.save("another_account",userLoad.toJson());
-    setState(() {
-      User swap = userLoad;
-      userLoad = anotherccount;
-      anotherccount = swap;
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeMenu(title: ' No Dust')), (Route<dynamic> route) => false);
-
-    });
-
-  }
 
 
   loadSharedPrefs() async {
@@ -324,26 +295,30 @@ class _ContactUs extends State<ContactUs> {
       setState(() {
         userLoad = user;
       });
+      load_channles("1");
     } catch (Excepetion) {
       // do something
       print("in Execption 1");
     }
 
-    try {
-      User user = User.fromJson(await sharedPref.read("another_account"));
+    try{
+      String x =await sharedPref.read("registerd_user");
+      print("xxxxx"+x);
       setState(() {
-        anotherccount = user;
+        regiserd_user=x;
+
       });
-    } catch (Excepetion) {
-      // do something
-      print("in Execption 2");
+      load_channles("0");
+    }
+    catch(Excepetion){
+
     }
 
   }
 
-  void load_channles() async
+  void load_channles(String Usertype) async
   {
-    var response = await  http.post(myurl);
+    var response = await  http.post(myurl ,headers:  {'USERTYPE':Usertype});
     if(response.statusCode == 200) {
       print(response.body);
       contactusResponse jsonResponse = contactusResponse.fromJson(jsonDecode(response.body));
@@ -382,15 +357,16 @@ class _ContactUs extends State<ContactUs> {
 
 
   void submit_data() async {
-    if (( selectedChannel != null && selectedClass!= null  && selectedChannel !="2")||(selectedChannel =="2")){
+    if (selectedChannel != null && selectedClass!= null){
+      print("selected"+selectedClass);
+      Map map ={'message': textboxController.text,};
+      var body = json.encode(map);
+      print("body");
+      print(body);
       var response = await http.post(myurlSubmit, headers: {
-        'CUSTOMERID': userLoad.customer_id,
-        'CATEGORY': selectedClass,
-        'DATE': date,
-        'MESSAGE': textboxController.text,
-        'FLAGSTATUS': flag,
-        'SUBJECT': selectedChannel
-      });
+        'CUSTOMERID': userLoad!=null?userLoad.customer_id:regiserd_user,
+        'REQUESTID': selectedClass
+      },body: body);
       if (response.statusCode == 200) {
         print(response.body);
         contactusResponse jsonResponse = contactusResponse.fromJson(

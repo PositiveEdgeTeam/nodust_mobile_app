@@ -1,0 +1,87 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:nodustmobileapp/Models/userDb.dart';
+class DBProvider {
+  DBProvider._();
+  static final DBProvider db = DBProvider._();
+  static int get _version => 1;
+  static Database _database;
+
+  Future<Database> get database async {
+    print("get_database");
+    if (_database != null)
+      return _database;
+
+    // if _database is null we instantiate it
+    _database = await initDB();
+    return _database;
+  }
+
+  initDB() async {
+    print("get_init");
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, "TestDB.db");
+    return await openDatabase(path, version: _version, onOpen: (db) {
+    }, onCreate: (Database db, int version) async {
+      await db.execute("CREATE TABLE Users ("
+          "id INTEGER PRIMARY KEY,"
+          "username TEXT ,"
+          "password TEXT,"
+          "classification TEXT"
+          ")");
+    });
+  }
+
+  Future<List<UserDb>> getAllUsers(int id) async {
+    final db = await database;
+    var res = await db.query("Users", where: "id != ?", whereArgs: [id]);
+    List<UserDb> list =
+    res.isNotEmpty ? res.map((c) => UserDb.fromMap(c)).toList() : [];
+    return list;
+  }
+  /*int getUsersCount()
+  {
+    final result = await db.rawQuery('SELECT COUNT(*) FROM Users');
+    final count = Sqflite.firstIntValue(result);
+  }*/
+
+  getUser(int id )async{
+    final db = await database;
+    var res = await db.query("Users", where: "id = ?", whereArgs: [id]);
+    return res.isNotEmpty ? UserDb.fromMap(res.first) : null;
+  }
+
+  getAnotherUser(int id) async {
+    final db = await database;
+    var res = await db.query("Users", where: "id != ?", whereArgs: [id]);
+    return res.isNotEmpty ? UserDb.fromMap(res.first) : null;
+  }
+
+  newUser(UserDb newuser) async {
+    final db = await database;
+    //get the biggest id in the table
+    //insert to the table using the new id
+    var raw = await db.rawInsert(
+        "INSERT Into Users (id,username,password,classification)"
+            " VALUES (?,?,?,?)",
+        [ newuser.id,newuser.username, newuser.password,newuser.classification]);
+    return raw;
+  }
+  Future<int> getUsersCount() async {
+    Database db = await database;
+    return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM Users'));
+  }
+
+  deleteUser(String username) async {
+    final db = await database;
+    db.delete("Users", where: "username = ?", whereArgs: [username]);
+  }
+  deleteAll() async {
+    final db = await database;
+    db.rawDelete("Delete * from Users");
+  }
+}

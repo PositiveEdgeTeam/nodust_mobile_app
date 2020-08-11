@@ -24,6 +24,7 @@ class _ContractDetailsState extends State<ContractDetails> {
   CardDetails contract_data;
   String _customer_id;
   String status;
+  String LonLit;
   _ContractDetailsState(this.contract_data,this._customer_id,this.status);
   List<ContractAddress> _addresses =[];
   String selectedAddress;
@@ -36,7 +37,6 @@ class _ContractDetailsState extends State<ContractDetails> {
   final  emailController = new TextEditingController();
   final  mobileController = new TextEditingController();
   final  phoneController = new TextEditingController();
-
 
   void load_addresses () async
   {
@@ -153,13 +153,13 @@ class _ContractDetailsState extends State<ContractDetails> {
                   fontSize: 15,
                 ),
               ),
-              Text(contract_data != null
+              Text(contract_data != null && contract_data.contract_email!=null
                   ? contract_data.contract_email
                   : "email")
             ],
           ),
           SizedBox(
-            height: 30,
+            height: 20,
           ),
           Row(
             children: <Widget>[
@@ -287,7 +287,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                       ),
                     ),
                     Text(
-                      contract_data != null
+                      contract_data != null && contract_data.address != null
                           ? contract_data.address
                           : "address",
                       maxLines: 2,
@@ -298,7 +298,7 @@ class _ContractDetailsState extends State<ContractDetails> {
             ],
           ),
           SizedBox(
-            height: 30,
+            height: 20,
           ),
           Row(
             children: <Widget>[
@@ -370,7 +370,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                 onPressed: () {
                   _modalBottomSheetMenu(context);
                   //_getLoction();
-                  _getCurrentLocation();
+                 // _getCurrentLocation();
                 },
               ),
             ],
@@ -396,6 +396,7 @@ class _ContractDetailsState extends State<ContractDetails> {
         .then((Position position) {
           print(position.longitude.toString());
           print(position.latitude.toString());
+          LonLit = " Longitude is "+ position.longitude.toString()+" & Latitude is "+position.latitude.toString();
           Fluttertoast.showToast(
             msg: position.longitude.toString()+","+position.latitude.toString(),
             toastLength: Toast.LENGTH_LONG,
@@ -415,7 +416,10 @@ class _ContractDetailsState extends State<ContractDetails> {
     mobileController.text=contract_data.contract_mobile;
     emailController.text=contract_data.contract_email;
     addressController.text="";
-    selectedAddress=_oldAddress;
+    LonLit="";
+    setState(() {
+      selectedAddress=_oldAddress;
+    });
 
     showModalBottomSheet(
         isScrollControlled:
@@ -491,19 +495,29 @@ class _ContractDetailsState extends State<ContractDetails> {
                               },
                             ),
                             _DropDownFormField_Address(),
-                            selectedAddress=="new_address"? TextFormField(
-                              decoration: const InputDecoration(
-                                  labelText: 'Address ',
-                                  isMandatoryField: true
-                              ),
-                              minLines: 1,
-                              maxLines: 2,
-                              controller: addressController,
-                              validator: (String value) {
-                                if (value.trim().isEmpty) {
-                                  return 'Address is required';
-                                }
-                              },
+                            selectedAddress=="new_address"? Row(
+                              children: <Widget>[
+                                Expanded (
+                                  child: TextFormField(
+                                    decoration: const InputDecoration(
+                                        labelText: 'Address ',
+                                        isMandatoryField: true,
+                                    ),
+                                    minLines: 1,
+                                    maxLines: 2,
+                                    controller: addressController,
+                                    validator: (String value) {
+                                      if (value.trim().isEmpty) {
+                                        return 'Address is required';
+                                      }
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.my_location),
+                                  onPressed: _getCurrentLocation,
+                                )
+                              ],
                             ) : Text(""),
                             RaisedButton(onPressed: (){
                               request_update(context);
@@ -523,6 +537,7 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   void request_update (BuildContext context){
     bool validated =_formKey.currentState.validate();
+    print("valid"+validated.toString());
     if(selectedAddress == "new_address" && addressController.text=="" && validated)
       {
         Fluttertoast.showToast(
@@ -531,8 +546,6 @@ class _ContractDetailsState extends State<ContractDetails> {
         );
         validated= false;
       }
-    print("validation");
-    print(validated);
     if(validated) {
       bodyRequest = "";
       if (nameController.text != contract_data.client_name)
@@ -564,6 +577,8 @@ class _ContractDetailsState extends State<ContractDetails> {
         if (bodyRequest != "")
           bodyRequest += " , ";
         bodyRequest += "Add new Address " + addressController.text;
+        if (LonLit!=null && LonLit!="")
+          bodyRequest += LonLit;
       }
       else if (_oldAddress != selectedAddress) {
         if (bodyRequest != "")
@@ -578,13 +593,6 @@ class _ContractDetailsState extends State<ContractDetails> {
   }
   _DropDownFormField_Address() {
     return FormField<String>(
-      validator: (value) {
-        if (value == null) {
-          print(selectedAddress);
-          return "Please Select Address";
-
-        }
-      },
       onSaved: (value) {
         selectedAddress = value;
         print(selectedAddress);
@@ -634,7 +642,9 @@ class _ContractDetailsState extends State<ContractDetails> {
   }
 
   _submitChanges (BuildContext context)async{
-    var response = await  http.post("http://gdms.nodust-eg.com:80/cmobile_API/UpdateContractDetails",headers: {'CUSTOMERID':_customer_id,'REQUESTBODY':bodyRequest,'CARDID':contract_data.card_no});
+    Map map ={'REQUESTBODY':bodyRequest,};
+    var body = json.encode(map);
+    var response = await  http.post("http://gdms.nodust-eg.com:80/cmobile_API/UpdateContractDetails",headers: {'CUSTOMERID':_customer_id,'CARDID':contract_data.card_no},body: body);
     if(response.statusCode == 200) {
       CardResponse jsonResponse = CardResponse.fromJson(jsonDecode(response.body));
       if(jsonResponse != null && jsonResponse.state=="Done") {
