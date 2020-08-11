@@ -379,13 +379,14 @@ class _ContractDetailsState extends State<ContractDetails> {
       ),
     );
   }
+  /*
   void _getLoction()async{
     print("geo");
     Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     print(position.altitude.toString() +","+ position.longitude.toString());
 
   }
-
+*/
 
   _getCurrentLocation() {
     //print("xxxxx");

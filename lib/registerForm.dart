@@ -66,7 +66,7 @@ class _RegisterFormState extends State<RegisterForm> {
               decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(0.0),
                   labelText: 'channel ',
-                  isMandatoryField: true
+                  //isMandatoryField: true
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -123,7 +123,7 @@ class _RegisterFormState extends State<RegisterForm> {
               decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(0.0),
                   labelText: 'Account Type ',
-                  isMandatoryField: true
+                  //isMandatoryField: true
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -187,7 +187,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     controller: usernameController,
                     decoration: const InputDecoration(
                         labelText: 'User Name ',
-                        isMandatoryField: true
+                        //isMandatoryField: true
                     ),
                     onEditingComplete:(){
                       setState(() {
@@ -220,7 +220,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     controller: nameController,
                     decoration: const InputDecoration(
                       labelText: 'Full name ',
-                      isMandatoryField: true,
+                      //isMandatoryField: true,
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -235,7 +235,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Password ',
-                      isMandatoryField: true,
+                      //isMandatoryField: true,
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -254,7 +254,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     controller: parentphoneController,
                     decoration: const InputDecoration(
                         labelText: 'Client Number',
-                        isMandatoryField: true
+                        //isMandatoryField: true
                     ),
                     validator: (String value) {
                       if (value.trim().isEmpty) {
@@ -276,7 +276,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                         labelText: 'Email ',
-                        isMandatoryField: true
+                        //isMandatoryField: true
                     ),
                     validator:validateEmail ,
                   ),
@@ -284,7 +284,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     controller: mobileController,
                     decoration: const InputDecoration(
                       labelText: 'Mobile ',
-                      isMandatoryField: true,
+                      //isMandatoryField: true,
                     ),
                     validator: validateMobile,
                     keyboardType: TextInputType.phone,
@@ -294,7 +294,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     controller: phoneController,
                     decoration: const InputDecoration(
                         labelText: 'Phone ',
-                        isMandatoryField: true
+                        //isMandatoryField: true
                     ),
                     validator: validatePhone,
                     keyboardType: TextInputType.phone,
